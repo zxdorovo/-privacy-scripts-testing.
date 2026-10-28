@@ -1,0 +1,15 @@
+{
+  "projectName": "AdGuard-Compatibility-QA",
+  "version": "1.0.0",
+  "environment": "testing",
+  "featuresToVerify": {
+    "contentFiltering": true,
+    "dnsProtection": false,
+    "stealthMode": true
+  },
+  "testSelectors": [
+    "div.sponsored-post",
+    "iframe[src*='marketing']",
+    "amp-ad"
+  ]
+}
