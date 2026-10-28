@@ -1,0 +1,75 @@
+! Checksum: 8f9b2c3d4e5f6a7b8c9d0e1f2a3b4c5d
+! Title: Extended AdGuard Compatibility & Anti-Tracking Test Filter
+! Description: Comprehensive ruleset for QA automation, layout stability testing, and traffic analysis.
+! Version: 2.1.0
+! Last Modified: 2026-10-28
+! Expires: 3 days
+! Homepage: https://github.com
+! License: https://opensource.org
+
+! =============================================================================
+! SECTION 1: GLOBAL NETWORK BLOCKING RULES (General Ad Servers & Telemetry)
+! =============================================================================
+||adserver-exchange.net^$script,third-party
+||trackers-analytics.com^$xhr,important
+||telemetry-cdn.org^$websocket
+||pixel-tracking.io^$image
+||marketing-beacon.net^
+
+! Block specific localized ad network subdomains
+||ads.marketing-hub.co.uk^
+||analytics.data-collector.de^
+||promotions.shopping-deals.fr^
+||banner-rotation.net.au^
+
+! Pattern matching for typical ad delivery paths
+/v1/ads/deliver/*$script
+/assets/js/sponsored/track_*.js
+/wp-content/plugins/ad-rotator/
+
+! =============================================================================
+! SECTION 2: COSMETIC HIDING RULES (Element Hiding Filters)
+! =============================================================================
+! Global selectors for standard ad wrappers
+##.ad-banner-container
+##div[class*="-ad-wrapper"]
+##section[id^="sponsored-links-"]
+##aside.sidebar-ad-placement
+##.premium-promoted-content
+
+! Domain-specific element hiding for test environments
+qa-testing-hub.com###top-marquee-ad
+sandbox-env.net##div.partner-offers-list
+web-dev-benchmark.org##.native-ad-card
+app-interface-mockup.io##iframe[src*="doubleclick"]
+
+! Remove empty spaces left by blocked elements
+##.ad-spacer { height: 0 !important; display: none !important; }
+
+! =============================================================================
+! SECTION 3: PRIVACY & ANTI-TRACKING RULES (Social Widgets & Annoyances)
+! =============================================================================
+! Block invasive third-party tracking scripts
+||social-connect-tracker.com^$script,domain=~safe-auth.com
+||behavioral-logs.net^$xmlhttprequest
+
+! Hide annoying cookie banners and consent notices for clean testing
+##.cookie-consent-modal
+##div[id*="gdpr-privacy-overlay"]
+##amp-consent
+
+! Block known crypto-mining scripts (Resource protection)
+||coinhive-miner.info^$script
+||crypto-loot-pool.org^$script
+
+! =============================================================================
+! SECTION 4: ADVANCED ADGUARD REWRITE & REDIRECT RULES
+! =============================================================================
+! Inject empty JS/tracking pixels instead of letting the connection fail
+||://analytics-platform.com
+||tracking-beacon.org/pixel.gif$redirect=noopimg
+||click-counter.net/count.js$redirect=nowoif
+
+! Exception rules for testing (Whitelisting to prevent breakage)
+@@||sandbox-env.net/essential-scripts/*$script
+@@@@||qa-testing-hub.com^$generichide
